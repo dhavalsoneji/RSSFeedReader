@@ -1,7 +1,7 @@
 package com.dhavalsoneji.rssfeedreader.model;
 
 /**
- * Created by Dhaval Soneji Riontech on 30/11/16.
+ * Created by Dhaval Soneji on 30/11/16.
  */
 public class Entry {
     private String id;
