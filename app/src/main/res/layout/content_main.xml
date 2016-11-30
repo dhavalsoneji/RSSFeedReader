@@ -13,21 +13,10 @@
     tools:context="com.dhavalsoneji.rssfeedreader.ui.activity.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefresh"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+    <com.dhavalsoneji.rssfeedreader.custom.BRssReader
+        android:id="@+id/rssReader"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:blogger_url="@string/blogger_feed_url" />
 
-        <ListView
-            android:id="@+id/listViewPost"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:divider="@color/colorPrimaryDark"
-            android:dividerHeight="@dimen/common_1_dp"
-            android:background="@color/white"
-            android:overScrollMode="never"
-            android:drawSelectorOnTop="false"
-            android:visibility="visible" />
-
-    </android.support.v4.widget.SwipeRefreshLayout>
 </RelativeLayout>

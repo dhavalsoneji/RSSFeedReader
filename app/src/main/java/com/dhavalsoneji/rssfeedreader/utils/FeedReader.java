@@ -13,21 +13,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Dhaval Soneji on 30/11/16.
- */
-
-public class BFeedReader {
-    private static final String TAG = BFeedReader.class.getSimpleName();
-    // Constants indicting XML element names that we're interested in
-    private static final int TAG_TITLE = 1;
-    private static final int TAG_LINK = 2;
-    private static final int TAG_PUBDATE = 3;
-    private static final int TAG_CREATOR = 4;
-    private static final int TAG_CATEGORY = 5;
-    private static final int TAG_GUID = 6;
-    private static final int TAG_DESCRIPTION = 7;
-    private static final int TAG_POSIT = 8;
+public class FeedReader {
+    private static final String TAG = FeedReader.class.getSimpleName();
 
     // We don't use XML namespaces
     private static final String ns = null;
@@ -52,51 +39,31 @@ public class BFeedReader {
             throws XmlPullParserException, IOException, ParseException {
         List<Entry> entries = new ArrayList<>();
 
-        // Search for <rss> tags. These wrap the beginning/end of an Atom document.
+        // Search for <feed> tags. These wrap the beginning/end of an Atom document.
         //
         // Example:
-        // <?xml version="1.0" encoding="utf-8"?>
-        // <rss xmlns="http://www.w3.org/2005/Atom">
+        // <feed>
         // ...
-        // </rss>
+        // </feed>
         try {
-            parser.require(XmlPullParser.START_TAG, ns, "rss");
+            parser.require(XmlPullParser.START_TAG, ns, "feed");
             while (parser.next() != XmlPullParser.END_TAG) {
                 if (parser.getEventType() != XmlPullParser.START_TAG) {
                     continue;
                 }
 
-                if (parser.getName().equals("channel")) {
-                    parser.require(XmlPullParser.START_TAG, ns, "channel");
-                    while (parser.next() != XmlPullParser.END_TAG) {
-                        if (parser.getEventType() != XmlPullParser.START_TAG) {
-                            continue;
-                        }
-
-
-                        // Starts by looking for the <item> tag. This tag repeates inside of <channel> for each
-                        // article in the feed.
-                        //
-                        // Example:
-                        // <item>
-                        //   <title>Article title</title>
-                        //   <link rel="alternate" type="text/html" href="http://example.com/article/1234"/>
-                        //   <link rel="edit" href="http://example.com/admin/article/1234"/>
-                        //   <id>urn:uuid:218AC159-7F68-4CC6-873F-22AE6017390D</id>
-                        //   <published>2003-06-27T12:00:00Z</published>
-                        //   <updated>2003-06-28T12:00:00Z</updated>
-                        //   <summary>Article summary goes here.</summary>
-                        //   <author>
-                        //     <name>Rick Deckard</name>
-                        //     <email>deckard@example.com</email>
-                        //   </author>
-                        // </item>
-                        if (parser.getName().equals("item")) {
-                            entries.add(readEvent(parser));
-                        } else {
-                            skip(parser);
-                        }
-                    }
+//              Starts by looking for the <entry> tag. This tag repeates inside of <feed> for each
+//              article in the feed.
+//              Example:
+//                  <entry>
+//                      <id>tag:blogger.com,1999:blog-3380459536257842470.post-6169024778464572293</id>
+//                      <published>2016-11-29T23:20:00.001-08:00</published>
+//                      <title type='text'>Post #3</title>
+//                      <content>Content of post</content>
+//                      ...
+//                  <entry>
+                if (parser.getName().equals("entry")) {
+                    entries.add(readEvent(parser));
                 } else {
                     skip(parser);
                 }
@@ -113,16 +80,11 @@ public class BFeedReader {
      */
     private Entry readEvent(XmlPullParser parser)
             throws XmlPullParserException, IOException, ParseException {
-        parser.require(XmlPullParser.START_TAG, ns, "item");
+        parser.require(XmlPullParser.START_TAG, ns, "entry");
         String title = null;
-        String link = null;
-        String pubdate = null;
-        String creator = null;
-        String category = null;
-        String guid = null;
-        String description = null;
-        String postId = null;
-        long publishedOn = 0;
+        String published = null;
+        String content = null;
+        String id = null;
 
         try {
             while (parser.next() != XmlPullParser.END_TAG) {
@@ -130,25 +92,18 @@ public class BFeedReader {
                     continue;
                 }
                 String name = parser.getName();
-                if (name.equals("post-id")) {
-                    // Example: <id>urn:uuid:218AC159-7F68-4CC6-873F-22AE6017390D</id>
-                    postId = readTag(parser, TAG_POSIT);
+                if (name.equals("id")) {
+                    // Example: <id>Article id</id>
+                    id = readBasicTag(parser, "id");
                 } else if (name.equals("title")) {
                     // Example: <title>Article title</title>
-                    title = readTag(parser, TAG_TITLE);
-                } else if (name.equals("link")) {
-                    // Example: <link rel="alternate" type="text/html" href="http://example.com/article/1234"/>
-                    //
-                    // Multiple link types can be included. readAlternateLink() will only return
-                    // non-null when reading an "alternate"-type link. Ignore other responses.
-                    String tempLink = readTag(parser, TAG_LINK);
-                    if (tempLink != null) {
-                        link = tempLink;
-                    }
-                } else if (name.equals("pubDate")) {
-                    pubdate = readTag(parser, TAG_PUBDATE);
-                } else if (name.equals("description")) {
-                    description = readTag(parser, TAG_DESCRIPTION);
+                    title = readBasicTag(parser, "title");
+                } else if (name.equals("published")) {
+                    // Example: <published>Article published date</published>
+                    published = readBasicTag(parser, "published");
+                } else if (name.equals("content")) {
+                    // Example <content>Article content</content>
+                    content = readBasicTag(parser, "content");
                 }
 
                 /*else if (name.equals("published")) {
@@ -164,37 +119,7 @@ public class BFeedReader {
         } catch (Exception e) {
             Applog.e(TAG, e.getMessage(), e);
         }
-        return new Entry(postId, title, description, pubdate);
-    }
-
-    /**
-     * Process an incoming tag and read the selected value from it.
-     */
-    private String readTag(XmlPullParser parser, int tagType)
-            throws IOException, XmlPullParserException {
-        String tag = null;
-        String endTag = null;
-
-        try {
-            switch (tagType) {
-                case TAG_POSIT:
-                    return readBasicTag(parser, "post-id");
-                case TAG_TITLE:
-                    return readBasicTag(parser, "title");
-                case TAG_DESCRIPTION:
-                    return readBasicTag(parser, "description");
-                case TAG_LINK:
-                    return readBasicTag(parser, "link");
-                case TAG_PUBDATE:
-                    return readBasicTag(parser, "pubDate");
-                //                return readAlternateLink(parser);
-                default:
-                    throw new IllegalArgumentException("Unknown tag type: " + tagType);
-            }
-        } catch (Exception e) {
-            Applog.e(TAG, e.getMessage(), e);
-        }
-        return null;
+        return new Entry(id, title, content, published);
     }
 
     /**

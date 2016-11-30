@@ -1,36 +1,23 @@
 package com.dhavalsoneji.rssfeedreader.ui.activity;
 
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ListView;
 
-import com.dhavalsoneji.rssfeedreader.ui.adapter.ListAdapter;
 import com.dhavalsoneji.rssfeedreader.R;
-import com.dhavalsoneji.rssfeedreader.ui.viewmodel.ViewModel;
+import com.dhavalsoneji.rssfeedreader.custom.BRssReader;
+import com.dhavalsoneji.rssfeedreader.utils.AppConstants;
 
 public class MainActivity extends AppCompatActivity {
+    private BRssReader rssReader;
 
-    private ListView mListView;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    private ViewModel mViewModel;
-    private ListAdapter mListAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        mViewModel = new ViewModel(this);
-
-        mListView = (ListView) findViewById(R.id.listViewPost);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeRefresh);
-
-        mViewModel.initRequest();
-
-        mViewModel.initToolbar();
-        mViewModel.initFab();
+        rssReader = (BRssReader) findViewById(R.id.rssReader);
+        rssReader.changeUrl(AppConstants.URL_BLOG_FEED);
     }
 
     @Override

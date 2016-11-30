@@ -2,10 +2,6 @@ package com.dhavalsoneji.rssfeedreader.utils;
 
 import android.util.Log;
 
-/**
- * Created by Dhaval Soneji on 8/11/16.
- */
-
 public class Applog {
     public static boolean DEBUG = true;
 

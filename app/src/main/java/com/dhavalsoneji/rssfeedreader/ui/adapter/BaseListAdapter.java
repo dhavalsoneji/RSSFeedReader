@@ -4,6 +4,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.widget.BaseAdapter;
 
+import com.dhavalsoneji.rssfeedreader.utils.Applog;
+
 import java.util.ArrayList;
 import java.util.List;
 
