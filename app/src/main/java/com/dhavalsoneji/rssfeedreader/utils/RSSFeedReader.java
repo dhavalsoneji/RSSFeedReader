@@ -26,17 +26,22 @@ public class RSSFeedReader {
     private static final String NO_INTERNET = "No internet connection found.\nCheck your connection.";
     private static final String EMPTY_LIST_FOUND = "Empty list found!";
     private static final String LOADING = "Loading...";
+    private static final String INVALID_URL = "Invalid url / Not a Blogspot blog's url";
+    private static final String PARSING_FAILED = "Parsing Exception, please cross check url sends xml data?";
     private ProgressDialog mDialog;
 
     public void execute(Context context, String url, LoadCompleteListener loadCompleteListener) {
         if (Utils.checkInternetConnection(context)) {
+            if (Utils.isValidBlogspotUrl(url)) {
+                try {
+                    final URL location = new URL(url);
+                    new FeedReaderAsyncTask(location, context, loadCompleteListener).execute();
 
-            try {
-                final URL location = new URL(url);
-                new FeedReaderAsyncTask(location, context, loadCompleteListener).execute();
-
-            } catch (Exception e) {
-                Applog.e(TAG, e.getMessage(), e);
+                } catch (Exception e) {
+                    Applog.e(TAG, e.getMessage(), e);
+                }
+            } else {
+                Utils.showToast(context, INVALID_URL);
             }
 
         } else {
@@ -72,6 +77,7 @@ public class RSSFeedReader {
                 list = feedReader.parseBloggerFeed(stream);
 
             } catch (Exception e) {
+                Utils.showToast(mContext, PARSING_FAILED);
                 Applog.e(TAG, e.getMessage(), e);
             }
             return list;

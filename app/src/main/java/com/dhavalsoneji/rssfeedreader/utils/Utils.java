@@ -91,4 +91,12 @@ public class Utils {
             return false;
         }
     }
+
+    public static boolean isValidBlogspotUrl(String url) {
+        if (url.contains("blogspot.com/feeds/posts/default")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
