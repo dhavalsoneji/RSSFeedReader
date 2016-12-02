@@ -8,7 +8,7 @@ Blogger Blog RSS feed url: http://github-rssfeedreader.blogspot.com/feeds/posts/
 
 To Use:
 
-<code>
+```java
 private RSSFeedReader feedReader;
 
 feedReader.execute(mActivity, url, new LoadCompleteListener() {
@@ -18,3 +18,4 @@ feedReader.execute(mActivity, url, new LoadCompleteListener() {
             }
         });
 </code>
+```
