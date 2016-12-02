@@ -18,5 +18,4 @@ feedReader.execute(context, url, new LoadCompleteListener() {
                 mActivity.displayEntry(list);
             }
         });
-</code>
 ```
