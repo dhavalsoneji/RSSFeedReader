@@ -11,10 +11,16 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class Utils {
     private static final String TAG = Utils.class.getSimpleName();
+    //2011-09-03T08:17:00.000-07:00//////////2011-09-03T08:17:00
+    private static final String IP_DATE_FORMAT_1 = "yyyy-MM-dd'T'HH:mm:ss";
+    private static final String OP_DATE_FORMAT_1 = "EEEE, dd MMMM yyyy";
 
     /**
      * Check Internet Available or Not
@@ -110,5 +116,21 @@ public class Utils {
         } else {
             return false;
         }
+    }
+
+    public static String formatDate(String dateTime) {
+        SimpleDateFormat inputFormat = new SimpleDateFormat(IP_DATE_FORMAT_1);
+        SimpleDateFormat outputFormat = new SimpleDateFormat(OP_DATE_FORMAT_1);
+
+        Date date = null;
+        String str = null;
+
+        try {
+            date = inputFormat.parse(dateTime);
+            str = outputFormat.format(date);
+        } catch (ParseException e) {
+            Applog.e(TAG, e.getMessage(), e);
+        }
+        return str;
     }
 }

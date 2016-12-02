@@ -164,6 +164,7 @@ public class RSSFeedReader {
         String title = null;
         String published = null;
         String content = null;
+        String postedBy = null;
         String id = null;
 
         try {
@@ -184,6 +185,21 @@ public class RSSFeedReader {
                 } else if (name.equals("content")) {
                     // Example <content>Article content</content>
                     content = readBasicTag(parser, "content");
+                } else if (name.equals("author")) {
+
+                    postedBy = "";
+                    parser.require(XmlPullParser.START_TAG, ns, "author");
+                    while (parser.next() != XmlPullParser.END_TAG) {
+                        if (parser.getEventType() != XmlPullParser.START_TAG) {
+                            continue;
+                        }
+
+                        if (parser.getName().equals("name")) {
+                            postedBy = "Posted by " + readBasicTag(parser, "name");
+                        } else {
+                            skip(parser);
+                        }
+                    }
                 }
 
                 /*else if (name.equals("published")) {
@@ -199,7 +215,7 @@ public class RSSFeedReader {
         } catch (Exception e) {
             Applog.e(TAG, e.getMessage(), e);
         }
-        return new Entry(id, title, content, published);
+        return new Entry(id, title, content, published, postedBy);
     }
 
     /**

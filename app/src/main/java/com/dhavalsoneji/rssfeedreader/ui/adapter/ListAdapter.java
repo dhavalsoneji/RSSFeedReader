@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.dhavalsoneji.rssfeedreader.R;
 import com.dhavalsoneji.rssfeedreader.model.Entry;
+import com.dhavalsoneji.rssfeedreader.utils.Utils;
 
 import java.util.List;
 
@@ -35,14 +36,18 @@ public class ListAdapter extends BaseListAdapter<Entry> {
             viewHolder.txtTitle = (TextView) convertView.findViewById(R.id.txtTitle);
             viewHolder.txtPublishedDate = (TextView) convertView.findViewById(R.id.txtPublishedDate);
             viewHolder.txtContent = (TextView) convertView.findViewById(R.id.txtContent);
+            viewHolder.txtPostedBy = (TextView) convertView.findViewById(R.id.txtPostedBy);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (Holder) convertView.getTag();
         }
 
         viewHolder.txtTitle.setText(getList().get(position).getTitle());
-        viewHolder.txtPublishedDate.setText(getList().get(position).getPublished());
-
+        String date = getList().get(position).getPublished();
+        date = date.substring(0, date.length() - 10);
+        Utils.showToast(mContext, date);
+        viewHolder.txtPublishedDate.setText(Utils.formatDate(date));
+        viewHolder.txtPostedBy.setText(getItem(position).getPostedBY());
         Spanned result;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
             result = Html.fromHtml(getList().get(position).getContent()
@@ -58,5 +63,6 @@ public class ListAdapter extends BaseListAdapter<Entry> {
         TextView txtTitle;
         TextView txtPublishedDate;
         TextView txtContent;
+        TextView txtPostedBy;
     }
 }

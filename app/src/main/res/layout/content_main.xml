@@ -4,17 +4,17 @@
     android:id="@+id/content_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/common_10_dp"
-    android:paddingRight="@dimen/common_10_dp"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    android:background="@color/white"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <ListView
         android:id="@+id/listViewPost"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
-        android:divider="@android:color/darker_gray"
-        android:dividerHeight="@dimen/common_1_dp"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="5dp"
         android:drawSelectorOnTop="false"
         android:overScrollMode="never"
         android:visibility="visible" />

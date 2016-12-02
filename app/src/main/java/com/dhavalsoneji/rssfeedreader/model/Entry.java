@@ -5,12 +5,14 @@ public class Entry {
     private String title;
     private String content;
     private String published;
+    private String postedBY;
 
-    public Entry(String id, String title, String content, String published) {
+    public Entry(String id, String title, String content, String published, String postedBy) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.published = published;
+        this.postedBY = postedBy;
     }
 
     public String getId() {
@@ -43,5 +45,13 @@ public class Entry {
 
     public void setPublished(String published) {
         this.published = published;
+    }
+
+    public String getPostedBY() {
+        return postedBY;
+    }
+
+    public void setPostedBY(String postedBY) {
+        this.postedBY = postedBY;
     }
 }
