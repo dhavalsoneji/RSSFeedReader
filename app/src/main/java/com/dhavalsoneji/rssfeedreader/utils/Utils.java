@@ -93,8 +93,20 @@ public class Utils {
     }
 
     public static boolean isValidBlogspotUrl(String url) {
-        if (url.contains("blogspot.com/feeds/posts/default")) {
-            return true;
+        if (url.contains("blogspot")) {
+            if (url.contains("feeds")) {
+                if (url.contains("posts")) {
+                    if (url.contains("default")) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
