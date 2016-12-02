@@ -1,25 +1,99 @@
 package com.dhavalsoneji.rssfeedreader.utils;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Xml;
 
 import com.dhavalsoneji.rssfeedreader.model.Entry;
+import com.dhavalsoneji.rssfeedreader.ui.listener.LoadCompleteListener;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FeedReader {
-    private static final String TAG = FeedReader.class.getSimpleName();
+public class RSSFeedReader {
+    private static final String TAG = RSSFeedReader.class.getSimpleName();
 
     // We don't use XML namespaces
     private static final String ns = null;
+    private static final String NO_INTERNET = "No internet connection found.\nCheck your connection.";
+    private static final String EMPTY_LIST_FOUND = "Empty list found!";
+    private static final String LOADING = "Loading...";
+    private ProgressDialog mDialog;
 
-    public List<Entry> parseBloggerFeed(InputStream in)
+    public void execute(Context context, String url, LoadCompleteListener loadCompleteListener) {
+        if (Utils.checkInternetConnection(context)) {
+
+            try {
+                final URL location = new URL(url);
+                new FeedReaderAsyncTask(location, context, loadCompleteListener).execute();
+
+            } catch (Exception e) {
+                Applog.e(TAG, e.getMessage(), e);
+            }
+
+        } else {
+            Utils.showToast(context, NO_INTERNET);
+        }
+    }
+
+    private class FeedReaderAsyncTask extends AsyncTask<Void, Void, List<Entry>> {
+
+        private LoadCompleteListener mLoadCompleteListener;
+        private Context mContext;
+        private URL mLocation;
+
+        FeedReaderAsyncTask(URL location, Context context, LoadCompleteListener loadCompleteListener) {
+            mLocation = location;
+            mContext = context;
+            mLoadCompleteListener = loadCompleteListener;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showProgressDialog(mContext);
+        }
+
+        @Override
+        protected List<Entry> doInBackground(Void... voids) {
+            List<Entry> list = new ArrayList<>();
+            try {
+                InputStream stream = Utils.downloadUrl(mLocation);
+
+                RSSFeedReader feedReader = new RSSFeedReader();
+                list = feedReader.parseBloggerFeed(stream);
+
+            } catch (Exception e) {
+                Applog.e(TAG, e.getMessage(), e);
+            }
+            return list;
+        }
+
+        @Override
+        protected void onPostExecute(List<Entry> entries) {
+            super.onPostExecute(entries);
+            hideProgressDialog(mContext);
+            try {
+                if (Utils.isValidList(entries)) {
+                    mLoadCompleteListener.display(entries);
+                } else {
+                    Utils.showToast(mContext, EMPTY_LIST_FOUND);
+                }
+            } catch (Exception e) {
+                Applog.e(TAG, e.getMessage(), e);
+            }
+        }
+    }
+
+    private List<Entry> parseBloggerFeed(InputStream in)
             throws XmlPullParserException, IOException, ParseException {
         try {
             XmlPullParser parser = Xml.newPullParser();
@@ -207,9 +281,28 @@ public class FeedReader {
         }
     }
 
-    /**
-     * This class represents a single entry (post) in the XML feed.
-     * <p>
-     * <p>It includes the data members "title," "link,","postId", and "description."
-     */
+    private void showProgressDialog(Context mContext) {
+        try {
+            mDialog = null;
+            mDialog = new ProgressDialog(mContext);
+            mDialog.setMessage(LOADING);
+            mDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            mDialog.setCanceledOnTouchOutside(true);
+            mDialog.setCancelable(true);
+            mDialog.show();
+        } catch (Exception e) {
+            Applog.e(TAG, e.getMessage(), e);
+        }
+    }
+
+    private void hideProgressDialog(Context mContext) {
+        try {
+            if (mDialog != null && mDialog.isShowing()) {
+                mDialog.dismiss();
+                mDialog = null;
+            }
+        } catch (Exception e) {
+            Applog.e(TAG, e.getMessage(), e);
+        }
+    }
 }
