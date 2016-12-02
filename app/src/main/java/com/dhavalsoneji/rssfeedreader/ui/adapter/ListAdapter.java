@@ -45,18 +45,18 @@ public class ListAdapter extends BaseListAdapter<Entry> {
 
         Spanned result;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            result = Html.fromHtml(getList().get(position).getPublished()
+            result = Html.fromHtml(getList().get(position).getContent()
                     , Html.FROM_HTML_MODE_LEGACY);
         } else {
-            result = Html.fromHtml(getList().get(position).getPublished());
+            result = Html.fromHtml(getList().get(position).getContent());
         }
         viewHolder.txtContent.setText(result);
         return convertView;
     }
 
     private class Holder {
-        private TextView txtTitle;
-        private TextView txtPublishedDate;
-        private TextView txtContent;
+        TextView txtTitle;
+        TextView txtPublishedDate;
+        TextView txtContent;
     }
 }

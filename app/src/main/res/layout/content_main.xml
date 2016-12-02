@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.dhavalsoneji.rssfeedreader.ui.activity.MainActivity"
-    tools:showIn="@layout/activity_main">
+    android:paddingLeft="@dimen/common_10_dp"
+    android:paddingRight="@dimen/common_10_dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <com.dhavalsoneji.rssfeedreader.custom.BRssReader
-        android:id="@+id/rssReader"
+    <ListView
+        android:id="@+id/listViewPost"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:blogger_url="@string/blogger_feed_url" />
+        android:background="@color/white"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="@dimen/common_1_dp"
+        android:drawSelectorOnTop="false"
+        android:overScrollMode="never"
+        android:visibility="visible" />
 
 </RelativeLayout>

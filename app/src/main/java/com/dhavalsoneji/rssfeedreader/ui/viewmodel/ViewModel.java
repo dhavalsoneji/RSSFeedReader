@@ -4,8 +4,8 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 
 import com.dhavalsoneji.rssfeedreader.R;
-import com.dhavalsoneji.rssfeedreader.custom.BRssReader;
 import com.dhavalsoneji.rssfeedreader.model.Entry;
+import com.dhavalsoneji.rssfeedreader.ui.activity.MainActivity;
 import com.dhavalsoneji.rssfeedreader.utils.Applog;
 import com.dhavalsoneji.rssfeedreader.utils.FeedReader;
 import com.dhavalsoneji.rssfeedreader.utils.Utils;
@@ -17,15 +17,15 @@ import java.util.List;
 
 public class ViewModel {
     public static final String TAG = ViewModel.class.getSimpleName();
-    private BRssReader rssReader;
+    private MainActivity mActivity;
     private ProgressDialog mDialog;
 
-    public ViewModel(BRssReader activity) {
-        rssReader = activity;
+    public ViewModel(MainActivity activity) {
+        mActivity = activity;
     }
 
     public void initRequest(String url) {
-        if (Utils.checkInternetConnection(rssReader.getContext())) {
+        if (Utils.checkInternetConnection(mActivity)) {
 
             try {
 
@@ -37,7 +37,7 @@ public class ViewModel {
             }
 
         } else {
-            Utils.showToast(rssReader.getContext(), rssReader.getResources().getString(R.string.no_internet));
+            Utils.showToast(mActivity, mActivity.getResources().getString(R.string.no_internet));
         }
     }
 
@@ -62,7 +62,7 @@ public class ViewModel {
                 InputStream stream = Utils.downloadUrl(mLocation);
 
                 FeedReader feedReader = new FeedReader();
-                list = feedReader.parse(stream);
+                list = feedReader.parseBloggerFeed(stream);
 
             } catch (Exception e) {
                 Applog.e(TAG, e.getMessage(), e);
@@ -76,9 +76,9 @@ public class ViewModel {
             hideProgressDialog();
             try {
                 if (Utils.isValidList(entries)) {
-                    rssReader.displayEntry(entries);
+                    mActivity.displayEntry(entries);
                 } else {
-                    Utils.showToast(rssReader.getContext(), rssReader.getResources().getString(R.string.empty_list_found));
+                    Utils.showToast(mActivity, mActivity.getResources().getString(R.string.empty_list_found));
                 }
             } catch (Exception e) {
                 Applog.e(TAG, e.getMessage(), e);
@@ -89,8 +89,8 @@ public class ViewModel {
     public void showProgressDialog() {
         try {
             mDialog = null;
-            mDialog = new ProgressDialog(rssReader.getContext());
-            mDialog.setMessage(rssReader.getResources().getString(R.string.please_wait));
+            mDialog = new ProgressDialog(mActivity);
+            mDialog.setMessage(mActivity.getResources().getString(R.string.please_wait));
             mDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             mDialog.setCanceledOnTouchOutside(true);
             mDialog.setCancelable(true);

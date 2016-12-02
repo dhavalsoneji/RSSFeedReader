@@ -19,14 +19,14 @@ public class FeedReader {
     // We don't use XML namespaces
     private static final String ns = null;
 
-    public List<Entry> parse(InputStream in)
+    public List<Entry> parseBloggerFeed(InputStream in)
             throws XmlPullParserException, IOException, ParseException {
         try {
             XmlPullParser parser = Xml.newPullParser();
             parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
             parser.setInput(in, null);
             parser.nextTag();
-            return readFeed(parser);
+            return readBloggerFeed(parser);
         } catch (Exception e) {
             Applog.e(TAG, e.getMessage(), e);
         } finally {
@@ -35,7 +35,7 @@ public class FeedReader {
         return null;
     }
 
-    private List<Entry> readFeed(XmlPullParser parser)
+    private List<Entry> readBloggerFeed(XmlPullParser parser)
             throws XmlPullParserException, IOException, ParseException {
         List<Entry> entries = new ArrayList<>();
 
@@ -63,7 +63,7 @@ public class FeedReader {
 //                      ...
 //                  <entry>
                 if (parser.getName().equals("entry")) {
-                    entries.add(readEvent(parser));
+                    entries.add(readEntry(parser));
                 } else {
                     skip(parser);
                 }
@@ -78,7 +78,7 @@ public class FeedReader {
      * Parses the contents of an entry. If it encounters a title, summary, or link tag, hands them
      * off to their respective "read" methods for processing. Otherwise, skips the tag.
      */
-    private Entry readEvent(XmlPullParser parser)
+    private Entry readEntry(XmlPullParser parser)
             throws XmlPullParserException, IOException, ParseException {
         parser.require(XmlPullParser.START_TAG, ns, "entry");
         String title = null;
@@ -128,7 +128,7 @@ public class FeedReader {
      * <p>You probably want to call readTag().
      *
      * @param parser Current parser object
-     * @param tag    XML element tag name to parse
+     * @param tag    XML element tag name to parseBloggerFeed
      * @return Body of the specified tag
      * @throws IOException
      * @throws XmlPullParserException
